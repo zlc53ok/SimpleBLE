@@ -7,6 +7,16 @@
 #include <iomanip>
 #include <iostream>
 #include <thread>
+#include <string.h>
+
+inline SimpleBluez::ByteArray MakeByteArray(const char* data)
+{
+	size_t size = strlen(data);
+	SimpleBluez::ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
 
 SimpleBluez::Bluez bluez;
 
@@ -108,7 +118,7 @@ int main(int argc, char* argv[]) {
         auto characteristic_rx = peripheral->get_characteristic("6e400001-b5a3-f393-e0a9-e50e24dcca9e",
                                                                 "6e400002-b5a3-f393-e0a9-e50e24dcca9e");
 
-        characteristic_rx->write_command("Hello World");
+        characteristic_rx->write_command(MakeByteArray("Hello World"));
 
         auto characteristic_tx = peripheral->get_characteristic("6e400001-b5a3-f393-e0a9-e50e24dcca9e",
                                                                 "6e400003-b5a3-f393-e0a9-e50e24dcca9e");

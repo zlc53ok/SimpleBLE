@@ -6,6 +6,22 @@
 #include <cstring>
 #include <map>
 
+inline SimpleBLE::ByteArray MakeByteArray(const int8_t* data, size_t size)
+{
+	SimpleBLE::ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
+
+inline SimpleBLE::ByteArray MakeByteArray(const char* data, size_t size)
+{
+	SimpleBLE::ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
+
 void simpleble_peripheral_release_handle(simpleble_peripheral_t handle) {
     if (handle == nullptr) {
         return;
@@ -241,7 +257,7 @@ simpleble_err_t simpleble_peripheral_read(simpleble_peripheral_t handle, simpleb
 
     *data_length = read_data.value().size();
     *data = static_cast<uint8_t*>(malloc(*data_length));
-    memcpy(*data, read_data.value().c_str(), *data_length);
+    memcpy(*data, read_data.value().data(), *data_length);
 
     return SIMPLEBLE_SUCCESS;
 }
@@ -257,7 +273,7 @@ simpleble_err_t simpleble_peripheral_write_request(simpleble_peripheral_t handle
 
     bool success = peripheral->write_request(SimpleBLE::BluetoothUUID(service.value),
                                              SimpleBLE::BluetoothUUID(characteristic.value),
-                                             SimpleBLE::ByteArray((const char*)data, data_length));
+                                             MakeByteArray((const char*)data, data_length));
 
     return success ? SIMPLEBLE_SUCCESS : SIMPLEBLE_FAILURE;
 }
@@ -273,7 +289,7 @@ simpleble_err_t simpleble_peripheral_write_command(simpleble_peripheral_t handle
 
     bool success = peripheral->write_command(SimpleBLE::BluetoothUUID(service.value),
                                              SimpleBLE::BluetoothUUID(characteristic.value),
-                                             SimpleBLE::ByteArray((const char*)data, data_length));
+                                             MakeByteArray((const char*)data, data_length));
 
     return success ? SIMPLEBLE_SUCCESS : SIMPLEBLE_FAILURE;
 }
@@ -352,7 +368,7 @@ simpleble_err_t simpleble_peripheral_read_descriptor(simpleble_peripheral_t hand
 
     *data_length = read_data.value().size();
     *data = static_cast<uint8_t*>(malloc(*data_length));
-    memcpy(*data, read_data.value().c_str(), *data_length);
+    memcpy(*data, read_data.value().data(), *data_length);
 
     return SIMPLEBLE_SUCCESS;
 }
@@ -368,7 +384,7 @@ simpleble_err_t simpleble_peripheral_write_descriptor(simpleble_peripheral_t han
 
     bool success = peripheral->write(
         SimpleBLE::BluetoothUUID(service.value), SimpleBLE::BluetoothUUID(characteristic.value),
-        SimpleBLE::BluetoothUUID(descriptor.value), SimpleBLE::ByteArray((const char*)data, data_length));
+        SimpleBLE::BluetoothUUID(descriptor.value), MakeByteArray((const char*)data, data_length));
 
     return success ? SIMPLEBLE_SUCCESS : SIMPLEBLE_FAILURE;
 }

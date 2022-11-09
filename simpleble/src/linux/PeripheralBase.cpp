@@ -18,6 +18,22 @@ const SimpleBLE::BluetoothUUID BATTERY_CHARACTERISTIC_UUID = "00002a19-0000-1000
 using namespace SimpleBLE;
 using namespace std::chrono_literals;
 
+inline ByteArray MakeByteArray(const int8_t* data, size_t size)
+{
+	ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
+
+inline ByteArray MakeByteArray(const char* data, size_t size)
+{
+	ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
+
 PeripheralBase::PeripheralBase(std::shared_ptr<SimpleBluez::Device> device,
                                std::shared_ptr<SimpleBluez::Adapter> adapter)
     : device_(std::move(device)), adapter_(std::move(adapter)) {}
@@ -130,7 +146,7 @@ std::vector<Service> PeripheralBase::services() {
 std::map<uint16_t, ByteArray> PeripheralBase::manufacturer_data() {
     std::map<uint16_t, ByteArray> manufacturer_data;
     for (auto& [manufacturer_id, value_array] : device_->manufacturer_data()) {
-        manufacturer_data[manufacturer_id] = ByteArray((const char*)value_array.data(), value_array.size());
+        manufacturer_data[manufacturer_id] = MakeByteArray((const char*)value_array.data(), value_array.size());
     }
 
     return manufacturer_data;
@@ -143,7 +159,7 @@ ByteArray PeripheralBase::read(BluetoothUUID const& service, BluetoothUUID const
         device_->has_battery_interface()) {
         // If this point is reached, the battery service needs to be emulated.
         uint8_t battery_percentage = device_->battery_percentage();
-        return ByteArray(reinterpret_cast<char*>(&battery_percentage), 1);
+        return MakeByteArray(reinterpret_cast<char*>(&battery_percentage), 1);
     }
 
     // Otherwise, attempt to read the characteristic using default mechanisms
@@ -174,7 +190,7 @@ void PeripheralBase::notify(BluetoothUUID const& service, BluetoothUUID const& c
         device_->has_battery_interface()) {
         // If this point is reached, the battery service needs to be emulated.
         device_->set_on_battery_percentage_changed(
-            [callback](uint8_t new_value) { callback(ByteArray(reinterpret_cast<char*>(&new_value), 1)); });
+            [callback](uint8_t new_value) { callback(MakeByteArray(reinterpret_cast<char*>(&new_value), 1)); });
         return;
     }
 

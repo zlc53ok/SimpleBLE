@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <string.h>
 
 namespace SimpleBLE {
 
@@ -13,7 +14,8 @@ using BluetoothUUID = std::string;
 
 // IDEA: Extend ByteArray to be constructed by a vector of bytes
 // and pointers to uint8_t.
-using ByteArray = std::string;
+using ByteArray = std::vector<int8_t>;
+
 
 enum class OperatingSystem {
     WINDOWS,

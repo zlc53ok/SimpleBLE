@@ -131,7 +131,14 @@ std::string guid_to_uuid(const winrt::guid& guid) {
     return helper.str();
 }
 
-ByteArray ibuffer_to_bytearray(const IBuffer& buffer) { return ByteArray((const char*)buffer.data(), buffer.Length()); }
+ByteArray ibuffer_to_bytearray(const IBuffer& buffer) 
+{ 
+    ByteArray aa;
+    aa.resize(buffer.Length());
+    memcpy(&aa[0], buffer.data(), buffer.Length());
+    return aa;
+    //return ByteArray((const char*)buffer.data(), buffer.Length()); 
+}
 
 IBuffer bytearray_to_ibuffer(const ByteArray& array) {
     DataWriter writer;

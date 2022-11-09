@@ -1,6 +1,22 @@
 #include "simplebluez/interfaces/GattCharacteristic1.h"
-
+#include <string.h>
 using namespace SimpleBluez;
+
+inline ByteArray MakeByteArray(const int8_t* data, size_t size)
+{
+	ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
+
+inline ByteArray MakeByteArray(const char* data, size_t size)
+{
+	ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
 
 GattCharacteristic1::GattCharacteristic1(std::shared_ptr<SimpleDBus::Connection> conn, std::string path)
     : SimpleDBus::Interface(conn, "org.bluez", path, "org.bluez.GattCharacteristic1") {}
@@ -88,6 +104,6 @@ void GattCharacteristic1::update_value(SimpleDBus::Holder& new_value) {
     for (std::size_t i = 0; i < value_array.size(); i++) {
         value_data[i] = value_array[i].get_byte();
     }
-    _value = ByteArray(value_data, value_array.size());
+    _value = MakeByteArray(value_data, value_array.size());
     delete[] value_data;
 }

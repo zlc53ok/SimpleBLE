@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace SimpleBluez {
 
-typedef std::string ByteArray;
+typedef std::vector<int8_t> ByteArray;
 
 }

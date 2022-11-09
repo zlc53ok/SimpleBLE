@@ -6,6 +6,14 @@
 
 #include "simpleble/SimpleBLE.h"
 
+inline SimpleBLE::ByteArray MakeByteArray(const char* data, size_t size)
+{
+	SimpleBLE::ByteArray aa;
+    aa.resize(size);
+    memcpy(&aa[0], data, size);
+    return aa;
+}
+
 int main() {
     auto adapter_optional = Utils::getAdapter();
 
@@ -70,7 +78,8 @@ int main() {
     // NOTE: Alternatively, `write_command` can be used to write to a characteristic too.
     // `write_request` is for unacknowledged writes.
     // `write_command` is for acknowledged writes.
-    peripheral.write_request(uuids[selection.value()].first, uuids[selection.value()].second, contents);
+	
+    peripheral.write_request(uuids[selection.value()].first, uuids[selection.value()].second, MakeByteArray(contents.data(), contents.size()));
 
     peripheral.disconnect();
     return EXIT_SUCCESS;
